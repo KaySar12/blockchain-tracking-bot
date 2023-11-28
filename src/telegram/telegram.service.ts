@@ -18,12 +18,13 @@ export class
         private userService: UserService,
     ) {
         this.provider = new ethers.JsonRpcProvider(configService.get('RPC'));
-        // this.provider.on('block', async (blockNumber) => {
-        //     const block = await this.provider.getBlock(blockNumber);
-        //     const txReceipt = await this.provider.getTransactionReceipt(block.transactions[0]);
-        //     console.log(await this.provider.getTransaction(block.transactions[0]))
-        //     await this.getLastestErc20TransactionDetail(txReceipt, await this.getAllRegisteredUser());
-        // })
+        this.provider.on('block', async (blockNumber) => {
+            console.log(`got new block: ${blockNumber}`);
+            const block = await this.provider.getBlock(blockNumber);
+            const txReceipt = await this.provider.getTransactionReceipt(block.transactions[0]);
+            console.log(await this.provider.getTransaction(block.transactions[0]))
+            await this.getLastestErc20TransactionDetail(txReceipt, await this.getAllRegisteredUser());
+        })
 
         this.bot.start(this.handleStart.bind(this));
         this.bot.launch();
